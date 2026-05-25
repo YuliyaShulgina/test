@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Мировое время</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d0d1a;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+      color: #a0c4ff;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #555;
+      font-size: 0.85rem;
+      margin-bottom: 40px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #13132a;
+      border: 1px solid #1e1e3f;
+      border-radius: 16px;
+      padding: 24px 20px;
+      text-align: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #3a3a7a;
+    }
+
+    .city {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #a0c4ff;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+
+    .country {
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .time {
+      font-size: 2rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: #ffffff;
+      letter-spacing: 2px;
+    }
+
+    .date {
+      font-size: 0.78rem;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .offset {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 0.7rem;
+      background: #1e1e3f;
+      color: #7878cc;
+      padding: 2px 10px;
+      border-radius: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Мировое время</h1>
+  <p class="subtitle">Обновляется каждую секунду</p>
+
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const zones = [
+      { city: "Москва",        country: "Россия",         tz: "Europe/Moscow" },
+      { city: "Лондон",        country: "Великобритания", tz: "Europe/London" },
+      { city: "Париж",         country: "Франция",        tz: "Europe/Paris" },
+      { city: "Берлин",        country: "Германия",       tz: "Europe/Berlin" },
+      { city: "Дубай",         country: "ОАЭ",            tz: "Asia/Dubai" },
+      { city: "Нью-Йорк",      country: "США",            tz: "America/New_York" },
+      { city: "Лос-Анджелес",  country: "США",            tz: "America/Los_Angeles" },
+      { city: "Чикаго",        country: "США",            tz: "America/Chicago" },
+      { city: "Токио",         country: "Япония",         tz: "Asia/Tokyo" },
+      { city: "Пекин",         country: "Китай",          tz: "Asia/Shanghai" },
+      { city: "Сингапур",      country: "Сингапур",       tz: "Asia/Singapore" },
+      { city: "Сидней",        country: "Австралия",      tz: "Australia/Sydney" },
+      { city: "Дели",          country: "Индия",          tz: "Asia/Kolkata" },
+      { city: "Стамбул",       country: "Турция",         tz: "Europe/Istanbul" },
+      { city: "Сан-Паулу",     country: "Бразилия",       tz: "America/Sao_Paulo" },
+      { city: "Йоханнесбург",  country: "ЮАР",            tz: "Africa/Johannesburg" },
+    ];
+
+    const grid = document.getElementById("grid");
+
+    zones.forEach(({ city, country, tz }) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="city">${city}</div>
+        <div class="country">${country}</div>
+        <div class="time" id="time-${tz.replace(/\//g, '-')}">--:--:--</div>
+        <div class="date" id="date-${tz.replace(/\//g, '-')}">...</div>
+        <span class="offset" id="offset-${tz.replace(/\//g, '-')}">UTC</span>
+      `;
+      grid.appendChild(card);
+    });
+
+    function getUtcOffset(tz) {
+      const now = new Date();
+      const parts = new Intl.DateTimeFormat('en', {
+        timeZone: tz,
+        timeZoneName: 'shortOffset'
+      }).formatToParts(now);
+      const tzPart = parts.find(p => p.type === 'timeZoneName');
+      return tzPart ? tzPart.value : '';
+    }
+
+    function tick() {
+      const now = new Date();
+      zones.forEach(({ tz }) => {
+        const id = tz.replace(/\//g, '-');
+
+        const time = now.toLocaleTimeString('ru-RU', { timeZone: tz, hour12: false });
+        const date = now.toLocaleDateString('ru-RU', {
+          timeZone: tz,
+          weekday: 'short', day: 'numeric', month: 'short'
+        });
+
+        document.getElementById(`time-${id}`).textContent = time;
+        document.getElementById(`date-${id}`).textContent = date;
+      });
+    }
+
+    // Offset labels are static — set once
+    zones.forEach(({ tz }) => {
+      const id = tz.replace(/\//g, '-');
+      document.getElementById(`offset-${id}`).textContent = getUtcOffset(tz);
+    });
+
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
