@@ -186,7 +186,7 @@ function updateFontBtns(size) {
   applyHeroImage(lsI('ms_hero_img'));
   applyPortraitImage(lsI('ms_portrait_img') || '../img/7.jpg');
   // Theme
-  const savedTheme = ls('ms_theme', 'dark');
+  const savedTheme = ls('ms_theme', 'contrast');
   const savedFont  = ls('ms_fontsize', 'normal');
   applyTheme(savedTheme);
   applyFontSize(savedFont);
