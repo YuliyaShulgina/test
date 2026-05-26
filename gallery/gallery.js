@@ -156,11 +156,11 @@ function updateFontBtns(size) {
   });
   // Artwork text
   const AW_DEF = [
-    { t: 'Untitled No. 14 — The Warm Hour', m: 'Oil on linen · 120 × 180 cm · 2024', p: '€ 8,400' },
-    { t: 'Meridian Blue',                   m: 'Acrylic, Resin · 80 × 80 cm · 2024',   p: '€ 4,200' },
-    { t: 'Study in Verdant',                m: 'Mixed media · 60 × 90 cm · 2023',       p: '€ 3,600' },
-    { t: 'Nocturne IV',                     m: 'Oil on canvas · 100 × 70 cm · 2023',    p: '€ 5,100' },
-    { t: 'Threshold',                       m: 'Oil, charcoal · 70 × 70 cm · 2023',     p: '€ 3,900' },
+    { t: 'The Night Watch',                 m: 'Rembrandt van Rijn · Oil on canvas · 363 × 437 cm · 1642', p: 'Rijksmuseum' },
+    { t: 'Water Lilies',                    m: 'Claude Monet · Oil on canvas · 89 × 100 cm · 1906',        p: 'Art Institute of Chicago' },
+    { t: 'Wheat Field with Cypresses',      m: 'Vincent van Gogh · Oil on canvas · 72 × 91 cm · 1889',     p: 'Metropolitan Museum' },
+    { t: 'The Starry Night',                m: 'Vincent van Gogh · Oil on canvas · 73 × 92 cm · 1889',     p: 'MoMA, New York' },
+    { t: 'Wanderer above the Sea of Fog',   m: 'Caspar David Friedrich · Oil on canvas · 98 × 74 cm · 1818', p: 'Kunsthalle Hamburg' },
   ];
   const aw = ls('ms_artworks', null);
   if (aw) aw.forEach((a, i) => {
@@ -171,10 +171,17 @@ function updateFontBtns(size) {
     if (m) m.textContent = (a.m && a.m.trim()) ? a.m : AW_DEF[i].m;
     if (p) p.textContent = (a.p && a.p.trim()) ? a.p : AW_DEF[i].p;
   });
-  // Images
+  // Images — fall back to default paintings (public domain, Wikimedia Commons) if no custom image saved
+  const DEFAULT_PAINTINGS = [
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/The_Night_Watch_-_HD.jpg/1280px-The_Night_Watch_-_HD.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg/1280px-Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Wheat_Field_with_Cypresses_-_Metropolitan_Museum_of_Art.jpg/1280px-Wheat_Field_with_Cypresses_-_Metropolitan_Museum_of_Art.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg/800px-Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg',
+  ];
   for (let i = 0; i < 5; i++) {
-    const d = lsI('ms_aw_img_' + i);
-    if (d) applyArtworkImage(i, d);
+    const d = lsI('ms_aw_img_' + i) || DEFAULT_PAINTINGS[i];
+    applyArtworkImage(i, d);
   }
   applyHeroImage(lsI('ms_hero_img'));
   applyPortraitImage(lsI('ms_portrait_img'));
