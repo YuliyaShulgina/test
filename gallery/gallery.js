@@ -156,11 +156,11 @@ function updateFontBtns(size) {
   });
   // Artwork text
   const AW_DEF = [
-    { t: 'The Night Watch',                 m: 'Rembrandt van Rijn · Oil on canvas · 363 × 437 cm · 1642', p: 'Rijksmuseum' },
-    { t: 'Water Lilies',                    m: 'Claude Monet · Oil on canvas · 89 × 100 cm · 1906',        p: 'Art Institute of Chicago' },
-    { t: 'Wheat Field with Cypresses',      m: 'Vincent van Gogh · Oil on canvas · 72 × 91 cm · 1889',     p: 'Metropolitan Museum' },
-    { t: 'The Starry Night',                m: 'Vincent van Gogh · Oil on canvas · 73 × 92 cm · 1889',     p: 'MoMA, New York' },
-    { t: 'Wanderer above the Sea of Fog',   m: 'Caspar David Friedrich · Oil on canvas · 98 × 74 cm · 1818', p: 'Kunsthalle Hamburg' },
+    { t: 'Between Dusk and Form', m: 'Renata Reingard · Oil on linen · 120 × 90 cm · 2023',       p: 'Private Collection, Berlin' },
+    { t: 'Weightless',            m: 'Renata Reingard · Mixed media on canvas · 80 × 100 cm · 2022', p: '€4,800' },
+    { t: 'The Quiet Hour',        m: 'Renata Reingard · Oil on canvas · 150 × 110 cm · 2024',      p: 'Available' },
+    { t: 'Interior with Light',   m: 'Renata Reingard · Oil and charcoal · 95 × 75 cm · 2023',     p: 'Private Collection' },
+    { t: 'Threshold',             m: 'Renata Reingard · Oil on linen · 130 × 100 cm · 2024',       p: '€6,200' },
   ];
   const aw = ls('ms_artworks', null);
   if (aw) aw.forEach((a, i) => {
