@@ -184,7 +184,7 @@ function updateFontBtns(size) {
     applyArtworkImage(i, d);
   }
   applyHeroImage(lsI('ms_hero_img'));
-  applyPortraitImage(lsI('ms_portrait_img'));
+  applyPortraitImage(lsI('ms_portrait_img') || '../img/bio.jpg');
   // Theme
   const savedTheme = ls('ms_theme', 'dark');
   const savedFont  = ls('ms_fontsize', 'normal');

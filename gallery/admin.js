@@ -147,7 +147,7 @@ const DEFAULTS = {
   's-gl-title':   'Recent <em>collection</em>',
   's-ab-label':   'About the Artist',
   's-ab-quote':   '"I paint the moment before recognition — when something is sensed but not yet named."',
-  's-ab-bio':     'Renata Reingard (b. 1981, Lyon) is a Paris-based painter whose practice orbits the threshold between figuration and pure sensation. Trained at the École nationale supérieure des Beaux-Arts, her work has been acquired by private collections across Europe, Asia, and North America.',
+  's-ab-bio':     'Renata Reingard (b. 20.07.2001, Kharkiv) is a painter whose practice orbits the threshold between figuration and pure sensation. Trained at the École nationale supérieure des Beaux-Arts, her work has been acquired by private collections across Europe, Asia, and North America.',
   's-pr-label':   'The Practice',
   's-pr-title':   'How a <em>painting</em> begins',
   's-p1n':        'The <em>Archive</em>',
