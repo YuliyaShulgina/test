@@ -173,11 +173,11 @@ function updateFontBtns(size) {
   });
   // Images — local files from /img/
   const DEFAULT_PAINTINGS = [
-    '../img/1.jpg',
-    '../img/2.jpg',
-    '../img/3.jpg',
-    '../img/4.jpg',
     '../img/5.jpg',
+    '../img/6.jpg',
+    '../img/9.jpg',
+    '../img/10.jpg',
+    '../img/11.jpg',
   ];
   for (let i = 0; i < 5; i++) {
     const d = lsI('ms_aw_img_' + i) || DEFAULT_PAINTINGS[i];
