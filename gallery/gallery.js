@@ -173,18 +173,18 @@ function updateFontBtns(size) {
   });
   // Images — local files from /img/
   const DEFAULT_PAINTINGS = [
-    '../img/1.jpg',
-    '../img/3.jpg',
-    '../img/7.jpg',
-    '../img/8.jpg',
-    '../img/12.jpg',
+    '../img/2.jpg',
+    '../img/4.jpg',
+    '../img/6.jpg',
+    '../img/9.jpg',
+    '../img/11.jpg',
   ];
   for (let i = 0; i < 5; i++) {
     const d = lsI('ms_aw_img_' + i) || DEFAULT_PAINTINGS[i];
     applyArtworkImage(i, d);
   }
   applyHeroImage(lsI('ms_hero_img'));
-  applyPortraitImage(lsI('ms_portrait_img') || '../img/bio.jpg');
+  applyPortraitImage(lsI('ms_portrait_img') || '../img/5.jpg');
   // Theme
   const savedTheme = ls('ms_theme', 'dark');
   const savedFont  = ls('ms_fontsize', 'normal');
