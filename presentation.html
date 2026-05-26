@@ -1,0 +1,772 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git — Презентація</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:      #0d0d1a;
+    --card:    #13132a;
+    --border:  #1e1e3f;
+    --accent:  #a0c4ff;
+    --accent2: #7878cc;
+    --text:    #e8e8f0;
+    --muted:   #6666aa;
+    --green:   #4ade80;
+    --yellow:  #fbbf24;
+    --red:     #f87171;
+    --code-bg: #0a0a18;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--accent2), var(--accent));
+    transition: width .4s ease;
+    z-index: 100;
+  }
+
+  #counter {
+    position: fixed;
+    top: 16px; right: 20px;
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--muted);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+    z-index: 100;
+  }
+
+  .slides {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity .45s ease, transform .45s ease;
+    pointer-events: none;
+    text-align: center;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  .slide.exit {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  .nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    padding: 20px;
+    border-top: 1px solid var(--border);
+    background: rgba(13,13,26,.95);
+  }
+  .nav-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    padding: 12px 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: background .2s, border-color .2s;
+  }
+  .nav-btn:hover { background: #1e1e3f; border-color: var(--accent2); }
+  .nav-btn:disabled { opacity: .3; cursor: default; }
+
+  .dots { display: flex; gap: 8px; }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+  }
+  .dot.active { background: var(--accent); transform: scale(1.3); }
+
+  /* ── TYPOGRAPHY ── */
+  .slide-eyebrow {
+    font-size: .9rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 16px;
+  }
+  .slide-subtitle {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .slide-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 700px;
+  }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 28px;
+    text-align: left;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 2.1;
+    width: 100%;
+    max-width: 720px;
+    margin-top: 20px;
+  }
+  .code-block .cmd     { color: var(--green); }
+  .code-block .comment { color: var(--muted); font-style: italic; font-weight: 400; }
+  .code-block .flag    { color: var(--yellow); }
+  .code-block .arg     { color: #c9d6ff; }
+
+  /* ── CMD TABLE ── */
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px 24px;
+    text-align: left;
+    max-width: 800px;
+    width: 100%;
+    margin-top: 20px;
+  }
+  .cmd-grid .cmd-cell {
+    font-family: 'Courier New', monospace;
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--green);
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 16px;
+    white-space: nowrap;
+    align-self: center;
+  }
+  .cmd-grid .desc-cell {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    align-self: center;
+    line-height: 1.5;
+  }
+  .desc-cell span {
+    color: var(--muted);
+    font-size: .875rem;
+    font-weight: 500;
+    display: block;
+  }
+
+  /* ── TITLE SLIDE ── */
+  .title-badge {
+    background: var(--card);
+    border: 1px solid var(--accent2);
+    border-radius: 20px;
+    padding: 8px 24px;
+    font-size: .9rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+  .title-big {
+    font-size: clamp(3rem, 10vw, 7rem);
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    letter-spacing: -2px;
+    margin-bottom: 16px;
+  }
+  .title-desc {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--muted);
+    max-width: 500px;
+    line-height: 1.7;
+  }
+
+  /* ── COLUMNS ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 860px;
+    width: 100%;
+    margin-top: 20px;
+  }
+  .col-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: left;
+  }
+  .col-card h3 {
+    font-size: .85rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 14px;
+  }
+  .col-card ul { list-style: none; }
+  .col-card li {
+    font-family: 'Courier New', monospace;
+    font-size: .875rem;
+    font-weight: 700;
+    color: var(--green);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .col-card li:last-child { border-bottom: none; }
+  .col-card li span {
+    display: block;
+    font-family: 'Segoe UI', sans-serif;
+    color: var(--muted);
+    font-size: .8rem;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .slide { padding: 40px 24px; }
+    .two-col { grid-template-columns: 1fr; }
+    .cmd-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="counter">1 / 21</div>
+
+<div class="slides" id="slides">
+
+  <!-- SLIDE 1 — TITLE CLAUDE CODE -->
+  <div class="slide active" data-index="0">
+    <div class="title-badge">AI-асистент від Anthropic</div>
+    <div class="title-big">Claude Code</div>
+    <p class="title-desc">Консольний інструмент, який розуміє вашу мову і виконує реальні задачі: код, файли, Git, браузер.</p>
+  </div>
+
+  <!-- SLIDE 2 — ЩО ТАКЕ CLAUDE -->
+  <div class="slide" data-index="1">
+    <p class="slide-eyebrow">Штучний інтелект</p>
+    <h2 class="slide-subtitle">Що таке Claude Code?</h2>
+    <p class="slide-text">Claude — AI-асистент від Anthropic. Claude Code — консольний інструмент, який інтегрується прямо в термінал і допомагає виконувати реальні задачі: писати код, керувати файлами, працювати з Git та браузером.</p>
+    <div class="two-col" style="margin-top:28px">
+      <div class="col-card">
+        <h3>Можливості</h3>
+        <ul>
+          <li>Створення файлів і коду<span>HTML, CSS, JS, Python та інші</span></li>
+          <li>Виконання команд<span>Git, PowerShell, Bash</span></li>
+          <li>Відкриття браузера<span>локально та на GitHub Pages</span></li>
+          <li>Редагування існуючого коду<span>точкові зміни без переписування</span></li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3>Як це працює</h3>
+        <ul>
+          <li>Користувач пише завдання<span>звичайною мовою</span></li>
+          <li>Claude аналізує контекст<span>читає файли, розуміє структуру</span></li>
+          <li>Виконує дії з інструментами<span>Edit, Bash, PowerShell, Read</span></li>
+          <li>Звітує про результат<span>коротко і по суті</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 — ЗАГАЛЬНА ХАРАКТЕРИСТИКА -->
+  <div class="slide" data-index="2">
+    <p class="slide-eyebrow">Застосування</p>
+    <h2 class="slide-subtitle">Для чого використовується Claude Code</h2>
+    <div class="cmd-grid">
+      <div class="cmd-cell">Розробка з нуля</div>
+      <div class="desc-cell">Генерація повноцінних файлів: сторінки, скрипти, конфіги, стилі<span>достатньо описати задачу звичайною мовою</span></div>
+      <div class="cmd-cell">Редагування коду</div>
+      <div class="desc-cell">Точкові зміни в існуючих файлах без переписування всього вмісту<span>пошук, заміна, рефакторинг, переклад тексту</span></div>
+      <div class="cmd-cell">Керування Git</div>
+      <div class="desc-cell">Ініціалізація репозиторію, коміти, push, перевірка статусу<span>одна команда замінює кілька кроків у терміналі</span></div>
+      <div class="cmd-cell">Діагностика помилок</div>
+      <div class="desc-cell">Аналіз коду, пошук багів, перевірка URL і HTTP-статусів<span>Claude пояснює причину і одразу виправляє</span></div>
+      <div class="cmd-cell">Деплой та тестування</div>
+      <div class="desc-cell">Публікація на GitHub Pages, відкриття сторінок у браузері, перевірка результату<span>весь цикл від зміни до публікації в одному діалозі</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 — ДІАЛОГ З CLAUDE -->
+  <div class="slide" data-index="3">
+    <p class="slide-eyebrow">Приклади команд</p>
+    <h2 class="slide-subtitle">Діалог з Claude — як це виглядало</h2>
+    <div class="code-block">
+      <div><span class="comment"># Користувач пише:</span></div>
+      <div><span class="arg">"створи одностраничний сайт з мировим часом"</span></div>
+      <div><span class="comment"># Claude створює index.html і відповідає одним реченням</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Користувач пише:</span></div>
+      <div><span class="arg">"виправ зображення картин у галереї"</span></div>
+      <div><span class="comment"># Claude перевіряє URL через curl -I, знаходить 404/400,</span></div>
+      <div><span class="comment"># знаходить правильний URL через Wikipedia API, виправляє gallery.js</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Користувач пише:</span></div>
+      <div><span class="arg">"запушить зміни"</span></div>
+      <div><span class="comment"># Claude виконує git add · commit · push автоматично</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Користувач пише:</span></div>
+      <div><span class="arg">"відкрий галерею на github pages"</span></div>
+      <div><span class="comment"># Claude запускає Start-Process з потрібним URL</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 — ШПАРГАЛКА CLAUDE CODE -->
+  <div class="slide" data-index="4">
+    <p class="slide-eyebrow">Підсумок</p>
+    <h2 class="slide-subtitle">Шпаргалка — Claude Code</h2>
+    <div class="two-col">
+      <div class="col-card">
+        <h3>Робота з файлами</h3>
+        <ul>
+          <li>"створи файл X"<span>Claude напише код і збереже файл</span></li>
+          <li>"відкрий файл X"<span>відкриє в браузері або редакторі</span></li>
+          <li>"змін Y на Z у файлі X"<span>точкова заміна в існуючому коді</span></li>
+          <li>"видали файл X"<span>видалить локально і з репозиторію</span></li>
+          <li>"знайди всі входження X"<span>пошук по всіх файлах проєкту</span></li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3>Git та деплой</h3>
+        <ul>
+          <li>"запушить зміни"<span>add + commit + push автоматично</span></li>
+          <li>"відкрий на github pages"<span>відкриє URL у браузері</span></li>
+          <li>"що змінилось?"<span>виконає git status + git diff</span></li>
+          <li>"переклади текст на укр."<span>знайде і замінить у всіх файлах</span></li>
+          <li>"виправ помилку в X"<span>прочитає, знайде баг, виправить</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLAUDE EXAMPLES: CREATING FILES -->
+  <div class="slide" data-index="5">
+    <p class="slide-eyebrow">Приклади — Claude Code</p>
+    <h2 class="slide-subtitle">Створення файлів різних типів</h2>
+    <div class="code-block">
+      <div><span class="comment"># HTML-сторінка</span></div>
+      <div><span class="arg">"створи одностраничний сайт з годинником реального часу"</span></div>
+      <div><span class="comment">→ Claude пише index.html з CSS та JS всередині</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Python-скрипт</span></div>
+      <div><span class="arg">"створи python файл який виводить привіт світ"</span></div>
+      <div><span class="comment">→ Claude створює hello.py з print("привіт світ")</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Презентація</span></div>
+      <div><span class="arg">"створи html презентацію у форматі слайдів про Git"</span></div>
+      <div><span class="comment">→ Claude генерує повноцінний файл з навігацією, стилями та контентом</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Будь-який формат: .js .css .json .md .sql ...</span></div>
+      <div><span class="arg">"створи конфіг package.json для React-проєкту"</span></div>
+    </div>
+  </div>
+
+  <!-- CLAUDE EXAMPLES: EDITING -->
+  <div class="slide" data-index="6">
+    <p class="slide-eyebrow">Приклади — Claude Code</p>
+    <h2 class="slide-subtitle">Редагування існуючого коду</h2>
+    <div class="code-block">
+      <div><span class="comment"># Заміна тексту в кількох файлах одночасно</span></div>
+      <div><span class="arg">"замін ім'я художника Mara Solène на Renata Reingard"</span></div>
+      <div><span class="comment">→ Claude знаходить усі входження у .html .js .css і замінює</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Зміна логіки</span></div>
+      <div><span class="arg">"зроби так щоб за замовчуванням стояла контрастна тема"</span></div>
+      <div><span class="comment">→ Claude знаходить потрібний рядок і змінює значення</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Переклад</span></div>
+      <div><span class="arg">"переклади весь текст презентації на українську"</span></div>
+      <div><span class="comment">→ Claude читає файл і перекладає весь користувацький текст</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Стиль</span></div>
+      <div><span class="arg">"зроби шрифт більшим і жирнішим"</span></div>
+      <div><span class="comment">→ Claude змінює font-size та font-weight у CSS</span></div>
+    </div>
+  </div>
+
+  <!-- CLAUDE EXAMPLES: DELETING -->
+  <div class="slide" data-index="7">
+    <p class="slide-eyebrow">Приклади — Claude Code</p>
+    <h2 class="slide-subtitle">Видалення файлів</h2>
+    <div class="code-block">
+      <div><span class="comment"># Видалення файлу з репозиторію</span></div>
+      <div><span class="arg">"видали з репозиторію файл hello.html"</span></div>
+      <div><span class="comment">→ Claude виконує git rm і робить коміт з видаленням</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Перевірка перед видаленням</span></div>
+      <div><span class="arg">"закоммить видалення bio.jpg"</span></div>
+      <div><span class="comment">→ Claude перевіряє git status, бачить deleted: img/bio.jpg</span></div>
+      <div><span class="comment">→ виконує git add img/bio.jpg + git commit + git push</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Перевірка чи файл відстежується</span></div>
+      <div><span class="arg">"чи є bio.jpg у репозиторії?"</span></div>
+      <div><span class="comment">→ Claude запускає git ls-files img/bio.jpg</span></div>
+      <div><span class="comment">→ порожній результат = файл не відстежується</span></div>
+    </div>
+  </div>
+
+  <!-- CLAUDE EXAMPLES: GIT PUBLISH -->
+  <div class="slide" data-index="8">
+    <p class="slide-eyebrow">Приклади — Claude Code</p>
+    <h2 class="slide-subtitle">Публікація в Git</h2>
+    <div class="code-block">
+      <div><span class="comment"># Повний цикл публікації</span></div>
+      <div><span class="arg">"запушить зміни"</span></div>
+      <div><span class="comment">→ git add &lt;змінені файли&gt;</span></div>
+      <div><span class="comment">→ git commit -m "опис змін"</span></div>
+      <div><span class="comment">→ git push</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Перший push нового проєкту</span></div>
+      <div><span class="arg">"відправ папку gallery з файлами в репозиторій"</span></div>
+      <div><span class="comment">→ Claude перевіряє git status, додає нові файли,</span></div>
+      <div><span class="comment">→ робить коміт з описом і виконує push</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Перевірка незакомічених змін</span></div>
+      <div><span class="arg">"що ще не запушено?"</span></div>
+      <div><span class="comment">→ git status + пояснення що змінилось і що зробити</span></div>
+    </div>
+  </div>
+
+  <!-- CLAUDE EXAMPLES: OPEN IN BROWSER -->
+  <div class="slide" data-index="9">
+    <p class="slide-eyebrow">Приклади — Claude Code</p>
+    <h2 class="slide-subtitle">Відкриття сторінок у браузері</h2>
+    <div class="code-block">
+      <div><span class="comment"># Відкрити локально</span></div>
+      <div><span class="arg">"відкрий галерею локально в браузері"</span></div>
+      <div><span class="comment">→ Start-Process "C:\Test\gallery\gallery.html"</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Відкрити на GitHub Pages</span></div>
+      <div><span class="arg">"відкрий галерею на github pages"</span></div>
+      <div><span class="comment">→ Start-Process "https://yuliyashulgina.github.io/..."</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Після внесення змін — одразу перевірити</span></div>
+      <div><span class="arg">"запушить зміни і відкрий на github pages"</span></div>
+      <div><span class="comment">→ Claude робить push і одразу відкриває браузер</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Підказка: якщо видно стару версію — Ctrl+Shift+R</span></div>
+      <div><span class="comment"># (жорстке оновлення без кешу браузера)</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE (WAS SLIDE 3) -->
+  <div class="slide" data-index="10">
+    <p class="slide-eyebrow">Команди</p>
+    <h2 class="slide-subtitle">Ініціалізація та налаштування</h2>
+    <div class="cmd-grid">
+      <div class="cmd-cell">git init</div>
+      <div class="desc-cell">Створює новий репозиторій у поточній папці<span>Створює приховану папку .git з історією</span></div>
+      <div class="cmd-cell">git clone &lt;url&gt;</div>
+      <div class="desc-cell">Копіює віддалений репозиторій на комп'ютер<span>Завантажує весь код та історію</span></div>
+      <div class="cmd-cell">git config --global user.name</div>
+      <div class="desc-cell">Встановлює ім'я автора комітів<span>Записується в кожен коміт</span></div>
+      <div class="cmd-cell">git config --global user.email</div>
+      <div class="desc-cell">Встановлює email автора комітів<span>Потрібно задати один раз</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 -->
+  <div class="slide" data-index="11">
+    <p class="slide-eyebrow">Команди</p>
+    <h2 class="slide-subtitle">Статус та історія</h2>
+    <div class="cmd-grid">
+      <div class="cmd-cell">git status</div>
+      <div class="desc-cell">Показує поточний стан репозиторію<span>Які файли змінено, додано або видалено</span></div>
+      <div class="cmd-cell">git log</div>
+      <div class="desc-cell">Виводить історію комітів<span>Автор, дата, повідомлення кожного коміту</span></div>
+      <div class="cmd-cell">git log --oneline</div>
+      <div class="desc-cell">Короткий список комітів в один рядок<span>Зручно для швидкого перегляду історії</span></div>
+      <div class="cmd-cell">git diff</div>
+      <div class="desc-cell">Показує що саме змінилося у файлах<span>Порівнює поточний стан з останнім комітом</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5 -->
+  <div class="slide" data-index="12">
+    <p class="slide-eyebrow">Команди</p>
+    <h2 class="slide-subtitle">Додавання та коміт</h2>
+    <div class="cmd-grid">
+      <div class="cmd-cell">git add &lt;файл&gt;</div>
+      <div class="desc-cell">Додає файл до області підготовки (staging)<span>Файл буде включено до наступного коміту</span></div>
+      <div class="cmd-cell">git add .</div>
+      <div class="desc-cell">Додає всі змінені файли одразу<span>Зручно, але будьте обережні зі зайвими файлами</span></div>
+      <div class="cmd-cell">git commit -m "текст"</div>
+      <div class="desc-cell">Зберігає підготовлені зміни<span>Створює коміт з описом</span></div>
+      <div class="cmd-cell">git rm &lt;файл&gt;</div>
+      <div class="desc-cell">Видаляє файл з репозиторію та робочої папки<span>Видалення теж потрібно закомітити</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6 -->
+  <div class="slide" data-index="13">
+    <p class="slide-eyebrow">Команди</p>
+    <h2 class="slide-subtitle">Віддалений репозиторій</h2>
+    <div class="cmd-grid">
+      <div class="cmd-cell">git remote add origin &lt;url&gt;</div>
+      <div class="desc-cell">Прив'язує локальний репозиторій до віддаленого<span>origin — стандартна назва віддаленого репозиторію</span></div>
+      <div class="cmd-cell">git remote -v</div>
+      <div class="desc-cell">Показує список підключених віддалених репозиторіїв<span>Відображає URL для fetch та push</span></div>
+      <div class="cmd-cell">git push -u origin master</div>
+      <div class="desc-cell">Надсилає коміти на сервер і задає гілку за замовчуванням<span>-u запам'ятовує напрямок, подальші push без аргументів</span></div>
+      <div class="cmd-cell">git push</div>
+      <div class="desc-cell">Надсилає коміти на сервер<span>Синхронізує локальну гілку з віддаленою</span></div>
+      <div class="cmd-cell">git pull</div>
+      <div class="desc-cell">Завантажує та застосовує зміни з сервера<span>Оновлює локальну копію до актуального стану</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7 -->
+  <div class="slide" data-index="14">
+    <p class="slide-eyebrow">Команди</p>
+    <h2 class="slide-subtitle">Гілки (branches)</h2>
+    <div class="cmd-grid">
+      <div class="cmd-cell">git branch</div>
+      <div class="desc-cell">Показує список усіх гілок<span>Поточна гілка позначена зірочкою *</span></div>
+      <div class="cmd-cell">git branch &lt;назва&gt;</div>
+      <div class="desc-cell">Створює нову гілку<span>Гілка створюється від поточного коміту</span></div>
+      <div class="cmd-cell">git checkout &lt;гілка&gt;</div>
+      <div class="desc-cell">Перемикається на іншу гілку<span>Робоча папка оновлюється до стану цієї гілки</span></div>
+      <div class="cmd-cell">git checkout -b &lt;гілка&gt;</div>
+      <div class="desc-cell">Створює нову гілку і одразу перемикається на неї<span>Скорочення для branch + checkout</span></div>
+      <div class="cmd-cell">git merge &lt;гілка&gt;</div>
+      <div class="desc-cell">Об'єднує вказану гілку з поточною<span>Застосовує всі коміти з гілки</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8 -->
+  <div class="slide" data-index="15">
+    <p class="slide-eyebrow">Робочий процес</p>
+    <h2 class="slide-subtitle">Типова послідовність</h2>
+    <div class="code-block">
+      <div><span class="comment"># 1. Створити або клонувати репозиторій</span></div>
+      <div><span class="cmd">git init</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># 2. Внести зміни, потім додати файли</span></div>
+      <div><span class="cmd">git add</span> <span class="arg">index.html</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># 3. Зберегти знімок з описом</span></div>
+      <div><span class="cmd">git commit</span> <span class="flag">-m</span> <span class="arg">"опис змін"</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># 4. Надіслати на GitHub</span></div>
+      <div><span class="cmd">git push</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># 5. Перевірити статус у будь-який момент</span></div>
+      <div><span class="cmd">git status</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9 -->
+  <div class="slide" data-index="16">
+    <p class="slide-eyebrow">Приклади з проєкту</p>
+    <h2 class="slide-subtitle">Створення репозиторію</h2>
+    <div class="code-block">
+      <div><span class="comment"># Створення репозиторію</span></div>
+      <div><span class="cmd">git init</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Налаштування імені та email автора</span></div>
+      <div><span class="cmd">git config</span> <span class="flag">--global</span> user.name <span class="arg">"YuliyaShulgina"</span></div>
+      <div><span class="cmd">git config</span> <span class="flag">--global</span> user.email <span class="arg">"ms.shulgina.yuliya@gmail.com"</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Прив'язка до GitHub-репозиторію</span></div>
+      <div><span class="cmd">git remote add</span> origin <span class="arg">https://github.com/YuliyaShulgina/test.github.io</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Перший push із зазначенням гілки master</span></div>
+      <div><span class="cmd">git push</span> <span class="flag">-u</span> origin <span class="arg">master</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10 -->
+  <div class="slide" data-index="17">
+    <p class="slide-eyebrow">Приклади з проєкту</p>
+    <h2 class="slide-subtitle">Додавання файлів та коміти</h2>
+    <div class="code-block">
+      <div><span class="comment"># Додавання окремого файлу</span></div>
+      <div><span class="cmd">git add</span> <span class="arg">main.py</span></div>
+      <div><span class="cmd">git commit</span> <span class="flag">-m</span> <span class="arg">"first"</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Додавання HTML-сторінок</span></div>
+      <div><span class="cmd">git add</span> <span class="arg">index.html</span> <span class="comment">&amp;&amp; git commit -m "add world clock page"</span></div>
+      <div><span class="cmd">git add</span> <span class="arg">hello.html</span> <span class="comment">&amp;&amp; git commit -m "add hello world page"</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Додавання цілої папки</span></div>
+      <div><span class="cmd">git add</span> <span class="arg">gallery/</span></div>
+      <div><span class="cmd">git add</span> <span class="arg">img/</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Перевірка стану перед комітом</span></div>
+      <div><span class="cmd">git status</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11 -->
+  <div class="slide" data-index="18">
+    <p class="slide-eyebrow">Приклади з проєкту</p>
+    <h2 class="slide-subtitle">Видалення файлів та синхронізація</h2>
+    <div class="code-block">
+      <div><span class="comment"># Видалення файлу з репозиторію</span></div>
+      <div><span class="cmd">git add</span> <span class="arg">hello.html</span>  <span class="comment"># staged deletion</span></div>
+      <div><span class="cmd">git add</span> <span class="arg">img/bio.jpg</span>   <span class="comment"># staged deletion</span></div>
+      <div><span class="cmd">git commit</span> <span class="flag">-m</span> <span class="arg">"Remove bio.jpg"</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Перевірка — чи відстежується файл</span></div>
+      <div><span class="cmd">git ls-files</span> <span class="arg">img/bio.jpg</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Надсилання всіх комітів на GitHub</span></div>
+      <div><span class="cmd">git push</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Перегляд стану репозиторію</span></div>
+      <div><span class="cmd">git status</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12 -->
+  <div class="slide" data-index="19">
+    <p class="slide-eyebrow">Підсумок</p>
+    <h2 class="slide-subtitle">Шпаргалка</h2>
+    <div class="two-col">
+      <div class="col-card">
+        <h3>Перший раз</h3>
+        <ul>
+          <li>git init<span>створити репозиторій</span></li>
+          <li>git config --global user.name<span>задати ім'я</span></li>
+          <li>git config --global user.email<span>задати email</span></li>
+          <li>git remote add origin &lt;url&gt;<span>підключити GitHub</span></li>
+          <li>git push -u origin master<span>перший push</span></li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h3>Щодня</h3>
+        <ul>
+          <li>git status<span>що змінилося</span></li>
+          <li>git add &lt;файл&gt;<span>підготувати до коміту</span></li>
+          <li>git commit -m "..."<span>зберегти знімок</span></li>
+          <li>git push<span>надіслати на GitHub</span></li>
+          <li>git pull<span>отримати оновлення</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE — ЯК СТВОРЕНА ЦЯ ПРЕЗЕНТАЦІЯ -->
+  <div class="slide" data-index="20">
+    <p class="slide-eyebrow">Мета-слайд</p>
+    <h2 class="slide-subtitle">Як була створена ця презентація</h2>
+    <div class="code-block">
+      <div><span class="comment"># Команда, якою створено цей файл</span></div>
+      <div><span class="arg">"створи в корні папки html файл з іменем presentation.</span></div>
+      <div><span class="arg"> на ньому у форматі слайдів розмісти інформацію</span></div>
+      <div><span class="arg"> про необхідні команди для роботи з git,</span></div>
+      <div><span class="arg"> напиши команди і для чого вони використовуються.</span></div>
+      <div><span class="arg"> також оформи як приклад всі використані команди"</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Claude створив presentation.html з нуля —</span></div>
+      <div><span class="comment"># 17 слайдів, навігація, стилі, анімація, весь контент</span></div>
+      <div>&nbsp;</div>
+      <div><span class="comment"># Команда публікації на GitHub</span></div>
+      <div><span class="cmd">git add</span> <span class="arg">presentation.html</span></div>
+      <div><span class="cmd">git commit</span> <span class="flag">-m</span> <span class="arg">"Add git presentation"</span></div>
+      <div><span class="cmd">git push</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav">
+  <button class="nav-btn" id="btnPrev" onclick="go(-1)" disabled>← Назад</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="btnNext" onclick="go(1)">Вперед →</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total  = slides.length;
+  let cur = 0;
+
+  const dotsEl   = document.getElementById('dots');
+  const btnPrev  = document.getElementById('btnPrev');
+  const btnNext  = document.getElementById('btnNext');
+  const progress = document.getElementById('progress');
+  const counter  = document.getElementById('counter');
+
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(n) {
+    if (n === cur) return;
+    slides[cur].classList.remove('active');
+    slides[cur].classList.add('exit');
+    const prev = cur;
+    cur = n;
+    setTimeout(() => slides[prev].classList.remove('exit'), 450);
+    slides[cur].classList.add('active');
+    update();
+  }
+
+  function go(dir) { goTo(Math.max(0, Math.min(total - 1, cur + dir))); }
+
+  function update() {
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === cur));
+    btnPrev.disabled = cur === 0;
+    btnNext.disabled = cur === total - 1;
+    progress.style.width = ((cur + 1) / total * 100) + '%';
+    counter.textContent  = (cur + 1) + ' / ' + total;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
+  });
+
+  update();
+</script>
+</body>
+</html>
