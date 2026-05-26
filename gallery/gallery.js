@@ -171,13 +171,13 @@ function updateFontBtns(size) {
     if (m) m.textContent = (a.m && a.m.trim()) ? a.m : AW_DEF[i].m;
     if (p) p.textContent = (a.p && a.p.trim()) ? a.p : AW_DEF[i].p;
   });
-  // Images — fall back to default paintings (public domain, Wikimedia Commons) if no custom image saved
+  // Images — local files from /img/
   const DEFAULT_PAINTINGS = [
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/The_Night_Watch_-_HD.jpg/1280px-The_Night_Watch_-_HD.jpg',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg/1280px-Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Wheat-Field-with-Cypresses-%281889%29-Vincent-van-Gogh-Met.jpg/1280px-Wheat-Field-with-Cypresses-%281889%29-Vincent-van-Gogh-Met.jpg',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg/1280px-Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg',
+    '../img/1.jpg',
+    '../img/2.jpg',
+    '../img/3.jpg',
+    '../img/4.jpg',
+    '../img/5.jpg',
   ];
   for (let i = 0; i < 5; i++) {
     const d = lsI('ms_aw_img_' + i) || DEFAULT_PAINTINGS[i];
