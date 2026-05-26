@@ -19,7 +19,7 @@ if (window.matchMedia('(pointer:fine)').matches) {
     $c.style.left = mx + 'px'; $c.style.top = my + 'px';
   });
   (function loop() {
-    rx += (mx - rx) * .12; ry += (my - ry) * .12;
+    rx += (mx - rx) * .35; ry += (my - ry) * .35;
     $r.style.left = rx + 'px'; $r.style.top = ry + 'px';
     requestAnimationFrame(loop);
   })();
