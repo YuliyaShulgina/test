@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-fontsize="normal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mara Solène — Artist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Overpass+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gallery.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- ── THEME BAR ─────────────────────────────────────── -->
+<div class="theme-bar">
+  <span>Theme</span>
+  <button class="theme-btn active" data-theme="dark"     onclick="setTheme('dark')">Dark</button>
+  <button class="theme-btn"        data-theme="light"    onclick="setTheme('light')">Light</button>
+  <button class="theme-btn"        data-theme="contrast" onclick="setTheme('contrast')">High Contrast</button>
+  <span class="theme-bar-sep">|</span>
+  <span>Text size</span>
+  <button class="font-btn active"  data-size="normal" onclick="setFontSize('normal')">A</button>
+  <button class="font-btn"         data-size="large"  onclick="setFontSize('large')">A+</button>
+  <button class="font-btn"         data-size="xl"     onclick="setFontSize('xl')">A++</button>
+</div>
+
+<!-- ── MOBILE MENU ───────────────────────────────────── -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-menu-close" onclick="closeMobMenu()">×</button>
+  <a href="#gallery"     onclick="closeMobMenu()">Works</a>
+  <a href="#about"       onclick="closeMobMenu()">Studio</a>
+  <a href="#exhibitions" onclick="closeMobMenu()">Exhibitions</a>
+  <a href="#contact"     onclick="closeMobMenu()">Inquire</a>
+  <button onclick="closeMobMenu();openLogin()">Admin</button>
+</div>
+
+<!-- ── LOGIN OVERLAY ────────────────────────────────── -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <button class="login-close" onclick="closeLogin()">×</button>
+    <p class="login-eyebrow">Studio Access</p>
+    <h2 class="login-title">Admin Login</h2>
+    <div class="login-field">
+      <label>Username</label>
+      <input type="text" id="loginUser" placeholder="admin" autocomplete="off">
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Enter Studio</button>
+    <p class="login-error" id="loginError">Invalid credentials — please try again</p>
+    <p class="login-hint">Demo: admin / gallery2025</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── NAV ──────────────────────────────────────────── -->
+<nav id="siteNav">
+  <a href="#" class="nav-logo">Mara Solène</a>
+  <ul class="nav-links">
+    <li class="hide-mobile"><a href="#gallery">Works</a></li>
+    <li class="hide-mobile"><a href="#about">Studio</a></li>
+    <li class="hide-mobile"><a href="#exhibitions">Exhibitions</a></li>
+    <li class="hide-mobile"><a href="#contact">Inquire</a></li>
+    <li><a href="#" class="nav-admin-btn" onclick="openLogin();return false;">Admin</a></li>
+  </ul>
+  <button class="nav-ham" onclick="openMobMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow" id="s-eyebrow">Contemporary — Figurative — Oil &amp; Mixed Media</p>
+    <h1 class="hero-title" id="s-hero-title">Light<br>finds <em>form</em><br>in silence</h1>
+    <p class="hero-desc" id="s-hero-desc">A study in tension between the visible and the felt — works that live in the space between breath and stillness.</p>
+    <div class="hero-cta">
+      <a href="#gallery" class="btn-primary">View Collection</a>
+      <a href="#contact" class="btn-ghost">Commission Work</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-img-wrap">
+      <div class="art-canvas">
+        <div class="art-stroke-1"></div><div class="art-stroke-2"></div>
+        <div class="art-stroke-3"></div><div class="art-circle"></div>
+        <div class="art-overlay"></div>
+      </div>
+      <div class="hero-img-photo" id="heroImgSite"></div>
+    </div>
+    <div class="hero-counter"><strong>47</strong><span>Works available</span></div>
+  </div>
+  <div class="scroll-line"></div>
+</section>
+
+<!-- ── MARQUEE ──────────────────────────────────────── -->
+<div class="marquee-section"><div class="marquee-track">
+  <span class="marquee-item">Oil on Linen <span>✦</span></span>
+  <span class="marquee-item">Mixed Media <span>✦</span></span>
+  <span class="marquee-item">Paris — New York — Tokyo <span>✦</span></span>
+  <span class="marquee-item">Est. 2009 <span>✦</span></span>
+  <span class="marquee-item">Figurative Abstraction <span>✦</span></span>
+  <span class="marquee-item">Limited Editions <span>✦</span></span>
+  <span class="marquee-item">International Collections <span>✦</span></span>
+  <span class="marquee-item">Oil on Linen <span>✦</span></span>
+  <span class="marquee-item">Mixed Media <span>✦</span></span>
+  <span class="marquee-item">Paris — New York — Tokyo <span>✦</span></span>
+  <span class="marquee-item">Est. 2009 <span>✦</span></span>
+  <span class="marquee-item">Figurative Abstraction <span>✦</span></span>
+  <span class="marquee-item">Limited Editions <span>✦</span></span>
+  <span class="marquee-item">International Collections <span>✦</span></span>
+</div></div>
+
+<!-- ── GALLERY ──────────────────────────────────────── -->
+<section class="gallery-section" id="gallery">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-label" id="s-gl-label">Selected Works</p>
+      <h2 class="section-title" id="s-gl-title">Recent <em>collection</em></h2>
+    </div>
+    <a href="#" class="section-link">View all →</a>
+  </div>
+  <div class="gallery-grid reveal">
+    <div class="gallery-item">
+      <div class="artwork art-1"><div class="gallery-img" id="gi-0"></div></div>
+      <div class="gallery-caption">
+        <div class="caption-title" id="aw-t-0">Untitled No. 14 — The Warm Hour</div>
+        <div class="caption-meta"  id="aw-m-0">Oil on linen · 120 × 180 cm · 2024</div>
+      </div>
+      <div class="caption-price" id="aw-p-0">€ 8,400</div>
+    </div>
+    <div class="gallery-item">
+      <div class="artwork art-2"><div class="gallery-img" id="gi-1"></div></div>
+      <div class="gallery-caption">
+        <div class="caption-title" id="aw-t-1">Meridian Blue</div>
+        <div class="caption-meta"  id="aw-m-1">Acrylic, Resin · 80 × 80 cm · 2024</div>
+      </div>
+      <div class="caption-price" id="aw-p-1">€ 4,200</div>
+    </div>
+    <div class="gallery-item">
+      <div class="artwork art-3"><div class="gallery-img" id="gi-2"></div></div>
+      <div class="gallery-caption">
+        <div class="caption-title" id="aw-t-2">Study in Verdant</div>
+        <div class="caption-meta"  id="aw-m-2">Mixed media · 60 × 90 cm · 2023</div>
+      </div>
+      <div class="caption-price" id="aw-p-2">€ 3,600</div>
+    </div>
+    <div class="gallery-item">
+      <div class="artwork art-4"><div class="gallery-img" id="gi-3"></div></div>
+      <div class="gallery-caption">
+        <div class="caption-title" id="aw-t-3">Nocturne IV</div>
+        <div class="caption-meta"  id="aw-m-3">Oil on canvas · 100 × 70 cm · 2023</div>
+      </div>
+      <div class="caption-price" id="aw-p-3">€ 5,100</div>
+    </div>
+    <div class="gallery-item">
+      <div class="artwork art-5"><div class="gallery-img" id="gi-4"></div></div>
+      <div class="gallery-caption">
+        <div class="caption-title" id="aw-t-4">Threshold</div>
+        <div class="caption-meta"  id="aw-m-4">Oil, charcoal · 70 × 70 cm · 2023</div>
+      </div>
+      <div class="caption-price" id="aw-p-4">€ 3,900</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ────────────────────────────────────────── -->
+<section class="about-section" id="about">
+  <div class="about-left reveal">
+    <div class="about-accent-line"></div>
+    <div class="about-portrait">
+      <div class="portrait-art"></div>
+      <div class="portrait-img" id="portraitImgSite"></div>
+    </div>
+  </div>
+  <div class="about-right reveal">
+    <p class="section-label" id="s-ab-label">About the Artist</p>
+    <blockquote class="about-quote" id="s-ab-quote">"I paint the moment before recognition — when something is sensed but not yet named."</blockquote>
+    <p class="about-bio" id="s-ab-bio">Mara Solène (b. 1981, Lyon) is a Paris-based painter whose practice orbits the threshold between figuration and pure sensation. Trained at the École nationale supérieure des Beaux-Arts, her work has been acquired by private collections across Europe, Asia, and North America. She works in oil, mixed media, and large-format charcoal, often spending months on a single canvas before considering it resolved.</p>
+    <div class="about-stats">
+      <div><div class="stat-num">15+</div><div class="stat-label">Years active</div></div>
+      <div><div class="stat-num">38</div><div class="stat-label">Exhibitions</div></div>
+      <div><div class="stat-num">200+</div><div class="stat-label">Works sold</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROCESS ──────────────────────────────────────── -->
+<section class="process-section">
+  <div class="section-header reveal"><div>
+    <p class="section-label" id="s-pr-label">The Practice</p>
+    <h2 class="section-title" id="s-pr-title">How a <em>painting</em> begins</h2>
+  </div></div>
+  <div class="process-grid reveal">
+    <div class="process-item">
+      <div class="process-num">01</div>
+      <div class="process-name" id="s-p1n">The <em>Archive</em></div>
+      <p class="process-desc" id="s-p1d">Every work begins with weeks of drawings, photographs, and found materials — a private visual language built from observation and memory.</p>
+    </div>
+    <div class="process-item">
+      <div class="process-num">02</div>
+      <div class="process-name" id="s-p2n"><em>Ground</em> &amp; Tone</div>
+      <p class="process-desc" id="s-p2d">Canvas or linen is toned in earth pigments. The ground is not neutral — it carries the emotional temperature of everything painted over it.</p>
+    </div>
+    <div class="process-item">
+      <div class="process-num">03</div>
+      <div class="process-name" id="s-p3n">Build &amp; <em>Erase</em></div>
+      <p class="process-desc" id="s-p3d">Layers accumulate and are destroyed. Erasure is as significant as mark-making. A painting reveals itself through what is removed.</p>
+    </div>
+    <div class="process-item">
+      <div class="process-num">04</div>
+      <div class="process-name" id="s-p4n">The <em>Resolution</em></div>
+      <p class="process-desc" id="s-p4d">A work is finished when it holds a specific quality of tension — not resolved, exactly, but still. A painting that is too comfortable is not yet done.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── EXHIBITIONS ───────────────────────────────────── -->
+<section class="exhibitions-section" id="exhibitions">
+  <div class="section-header reveal"><div>
+    <p class="section-label" id="s-ex-label">Exhibition History</p>
+    <h2 class="section-title" id="s-ex-title">Shows &amp; <em>residencies</em></h2>
+  </div></div>
+  <div class="exhibition-list reveal">
+    <div class="exhibition-item"><span class="exhibition-year">2025</span><span class="exhibition-name">Forms at the Edge of Knowing</span><span class="exhibition-venue">Galerie Perrotin, Paris</span><span class="exhibition-badge">Upcoming</span></div>
+    <div class="exhibition-item"><span class="exhibition-year">2024</span><span class="exhibition-name">Still/Moving — Group Exhibition</span><span class="exhibition-venue">White Cube, London</span><span class="exhibition-badge badge-past">Solo</span></div>
+    <div class="exhibition-item"><span class="exhibition-year">2023</span><span class="exhibition-name">The Residue of Light</span><span class="exhibition-venue">Pace Gallery, New York</span><span class="exhibition-badge badge-past">Solo</span></div>
+    <div class="exhibition-item"><span class="exhibition-year">2022</span><span class="exhibition-name">Periphery — European Painting Now</span><span class="exhibition-venue">Kunsthalle Wien, Vienna</span><span class="exhibition-badge badge-past">Group</span></div>
+    <div class="exhibition-item"><span class="exhibition-year">2021</span><span class="exhibition-name">After Hours Studio Residency</span><span class="exhibition-venue">Cité Internationale des Arts, Paris</span><span class="exhibition-badge badge-past">Residency</span></div>
+  </div>
+</section>
+
+<!-- ── CONTACT ──────────────────────────────────────── -->
+<section class="cta-section" id="contact">
+  <div class="reveal">
+    <p class="section-label" id="s-ct-label">Get in Touch</p>
+    <h2 class="cta-title"    id="s-ct-title">Commission a <em>new work</em></h2>
+    <p class="cta-sub"       id="s-ct-sub">Each commission begins with a conversation. Whether for a specific space or an open brief, every work is made with singular attention and care for where it will live.</p>
+  </div>
+  <div class="reveal">
+    <form class="contact-form" onsubmit="recordEnquiry();return false;">
+      <div class="form-row">
+        <div class="form-field"><label>Name</label><input type="text" placeholder="Your name"></div>
+        <div class="form-field"><label>Email</label><input type="email" placeholder="your@email.com"></div>
+      </div>
+      <div class="form-field"><label>Enquiry type</label>
+        <select>
+          <option value="">Select type</option>
+          <option>Commission a new work</option>
+          <option>Purchase available work</option>
+          <option>Exhibition / collaboration</option>
+          <option>Press &amp; media</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Message</label><textarea placeholder="Tell me about your project or space…"></textarea></div>
+      <button class="form-submit" type="submit">Send enquiry</button>
+    </form>
+  </div>
+</section>
+
+<!-- ── FOOTER ───────────────────────────────────────── -->
+<footer>
+  <p class="footer-copy">© 2025 Mara Solène. All works reserved.</p>
+  <div class="footer-socials">
+    <a href="#">Instagram</a><a href="#">Artsy</a><a href="#">Saatchi Art</a><a href="#">Press</a>
+  </div>
+</footer>
+
+<script src="gallery.js"></script>
+</body>
+</html>
